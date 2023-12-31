@@ -4,8 +4,11 @@ struct Employee {
     var vacationTaken: Int = 0
     
     var vacationRemaining: Int { //This property is calcullated dynamically. No actual value is stored in memory.
+        //Note for computed (dynamically calculated) properties: type MUST be explicitlly defined.
+        //Other note: you CANNOT use this computed properties for constants (let).
         get {
             vacationAllocated - vacationTaken //If no get or set is stablished, this line will work as get.
+            //As seen on closures, return is ONLY required if there is more than 1 line of code.
         }
         set { //How to handle set.
             vacationAllocated = vacationTaken + newValue
