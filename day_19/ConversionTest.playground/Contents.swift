@@ -1,82 +1,64 @@
-enum TemperatureUnits {
-    case celsius, fahrenheit, kelvin
-}
-
 struct TemperatureTransformer {
-    var from: TemperatureUnits
-    var to: TemperatureUnits
+    static let TemperatureUnits = ["Celsius", "Fahrenheit", "Kelvin"]
     
-    mutating func transform(_ temperature: Double) -> Double {
+    static func transform(_ temperature: Double, from: String, to: String) -> Double {
         switch from {
-        case .celsius:
+        case TemperatureUnits[0]:
             switch to {
-            case .celsius:
+            case TemperatureUnits[0]:
                 return temperature
-            case .fahrenheit:
+            case TemperatureUnits[1]:
                 return celsiusToFahrenheit(temperature)
-            case .kelvin:
+            case TemperatureUnits[2]:
                 return celsiusToKelvin(temperature)
+            default:
+                return temperature
             }
-        case .fahrenheit:
+        case TemperatureUnits[1]:
             let celsius = fahrenheitToCelsius(temperature)
-            self.from = .celsius
-            return transform(celsius)
-        case .kelvin:
+            return transform(celsius, from: TemperatureUnits[0], to: to)
+        case TemperatureUnits[2]:
             let celsius = kelvinToCelsius(temperature)
-            self.from = .celsius
-            return transform(celsius)
+            return transform(celsius, from: TemperatureUnits[0], to: to)
+        default:
+            return temperature
         }
     }
     
-    func celsiusToFahrenheit (_ temperature: Double) -> Double {
+    static func celsiusToFahrenheit (_ temperature: Double) -> Double {
         return temperature * 1.8 + 32.0
     }
     
-    func celsiusToKelvin (_ temperature: Double) -> Double {
+    static func celsiusToKelvin (_ temperature: Double) -> Double {
         return temperature + 273.15
     }
     
-    func fahrenheitToCelsius (_ temperature: Double) -> Double {
+    static func fahrenheitToCelsius (_ temperature: Double) -> Double {
         return (temperature - 32) / 1.8
     }
     
-    func kelvinToCelsius (_ temperature: Double) -> Double {
+    static func kelvinToCelsius (_ temperature: Double) -> Double {
         return temperature - 273.15
     }
 }
 
-var transformerCC = TemperatureTransformer(from: .celsius, to: .celsius)
+let units = TemperatureTransformer.TemperatureUnits
+
 let temperatureCC = 100.0
-print("\(temperatureCC) Celsius is \(transformerCC.transform(temperatureCC)) Celsius")
-
-var transformerCF = TemperatureTransformer(from: .celsius, to: .fahrenheit)
+print("\(temperatureCC) Celsius is \(TemperatureTransformer.transform(temperatureCC, from: units[0], to: units[0])) Celsius")
 let temperatureCF = 0.0
-print("\(temperatureCF) Celsius is \(transformerCF.transform(temperatureCF)) Fahrenheit")
-
-var transformerCK = TemperatureTransformer(from: .celsius, to: .kelvin)
+print("\(temperatureCF) Celsius is \(TemperatureTransformer.transform(temperatureCF, from: units[0], to: units[1])) Fahrenheit")
 let temperatureCK = 1.0
-print("\(temperatureCK) Celsius is \(transformerCK.transform(temperatureCK)) Kelvin")
-
-var transformerFC = TemperatureTransformer(from: .fahrenheit, to: .celsius)
+print("\(temperatureCK) Celsius is \(TemperatureTransformer.transform(temperatureCK, from: units[0], to: units[2])) Kelvin")
 let temperatureFC = 32.0
-print("\(temperatureFC) Fahrenheit is \(transformerFC.transform(temperatureFC)) Celsius")
-
-var transformerFF = TemperatureTransformer(from: .fahrenheit, to: .fahrenheit)
+print("\(temperatureFC) Fahrenheit is \(TemperatureTransformer.transform(temperatureFC, from: units[1], to: units[0])) Celsius")
 let temperatureFF = 0.0
-print("\(temperatureFF) Fahrenheit is \(transformerFF.transform(temperatureFF)) Fahrenheit")
-
-var transformerFK = TemperatureTransformer(from: .fahrenheit, to: .kelvin)
+print("\(temperatureFF) Fahrenheit is \(TemperatureTransformer.transform(temperatureFF, from: units[1], to: units[1])) Fahrenheit")
 let temperatureFK = 32.0
-print("\(temperatureFK) Fahrenheit is \(transformerFK.transform(temperatureFK)) Kelvin")
-
-var transformerKC = TemperatureTransformer(from: .kelvin, to: .celsius)
+print("\(temperatureFK) Fahrenheit is \(TemperatureTransformer.transform(temperatureFK, from: units[1], to: units[2])) Kelvin")
 let temperatureKC = 274.15
-print("\(temperatureKC) Kelvin is \(transformerKC.transform(temperatureKC)) Celsius")
-
-var transformerKF = TemperatureTransformer(from: .kelvin, to: .fahrenheit)
+print("\(temperatureKC) Kelvin is \(TemperatureTransformer.transform(temperatureKC, from: units[2], to: units[0])) Celsius")
 let temperatureKF = 273.15
-print("\(temperatureKF) Kelvin is \(transformerKF.transform(temperatureKF)) Fahrenheit")
-
-var transformerKK = TemperatureTransformer (from: .kelvin, to: .kelvin)
+print("\(temperatureKF) Kelvin is \(TemperatureTransformer.transform(temperatureKF, from: units[2], to: units[1])) Fahrenheit")
 let temperatureKK = 274.0
-print("\(temperatureKK) Kelvin is \(transformerKK.transform(temperatureKK)) Kelvin")
+print("\(temperatureKK) Kelvin is \(TemperatureTransformer.transform(temperatureKK, from: units[2], to: units[2])) Kelvin")
