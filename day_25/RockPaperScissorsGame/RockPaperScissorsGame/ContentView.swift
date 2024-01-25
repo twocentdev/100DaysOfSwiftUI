@@ -1,46 +1,73 @@
 import SwiftUI
 
+struct ButtonStyle: View {
+    let label: String
+    
+    var body: some View {
+        Text(label)
+            //.font(.subheadline.weight(.heavy))
+            .frame(maxWidth: .infinity)
+            .padding(25)
+            .background(.regularMaterial)
+            .clipShape(.rect(cornerRadius: 20))
+    }
+}
+
 struct ContentView: View {
     
-    @State private var game = Game(choosenOption: Int.random(in: 1..<3), winMode: Bool.random())
+    private let emojiOptions = ["🧻", "🪨", "✂️"]
     
+    @State private var game = Game(choosenOption: Int.random(in: 0..<3), winMode: Bool.random())
     @State private var showWin = false
     @State private var showLoose = false
     
     var body: some View {
         VStack {
             Spacer()
-            Section { //Choosen option by game
-                Text(Array(game.options.keys)[game.choosenOption])
+            Spacer()
+            VStack { //Choosen option by game
+                Text(emojiOptions[game.choosenOption])
+                    .font(.largeTitle)
             }
             Spacer()
-            Section { //Gamemode
+            VStack { //Gamemode
                 Text("Choose the correct option in order to")
+                    .foregroundStyle(.secondary)
+                    .font(.subheadline.weight(.heavy))
                 Text(game.winMode ? "WIN": "LOOSE")
+                    .font(.largeTitle.weight(.semibold))
             }
             Spacer()
-            Section { //Controllers
+            VStack { //Controllers
                 ForEach(0..<3) { number in
                     Button {
                         play(number)
                     } label: {
-                        Text(Array(game.options.keys)[number])
+                        ButtonStyle(label: emojiOptions[number])
                     }
+                    .padding(.horizontal)
                 }
             }
+            .padding(10)
             Spacer()
+            Spacer()
+            Section {
+                Text("Score: \(game.score)")
+            }
             Spacer()
         }
-        .padding()
-        .alert("You won", isPresented: $showWin) {
+        .ignoresSafeArea()
+        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, maxHeight: .infinity)
+        .background(.cyan.gradient)
+        .alert("Correct!", isPresented: $showWin) {
             Button("Continue", action: newGame)
         } message: {
-            Text("You've won this game")
+            Text("You've chosen the appropiate")
         }
-        .alert("You loose", isPresented: $showLoose) {
+        .alert("Wrong!", isPresented: $showLoose) {
             Button("Reset", action: newGame)
         } message: {
-            Text("You've loose this game")
+            Text("Se you next time")
         }
     }
     
@@ -52,22 +79,35 @@ struct ContentView: View {
     
     func play(_ player: Int) {
         if game.wins(player) {
+            game.goal()
             showWin = true
         } else {
+            game.reset()
             showLoose = true
         }
     }
 }
 
 struct Game {
+    private let GOAL = 1
+    private let MIN_SCORE = 0
     
     let options = ["paper": "scissors", "rock": "paper", "scissors": "rock"]
     var choosenOption: Int
+    var score = 0
     var winMode: Bool
+    
+    mutating func goal() {
+        score += GOAL
+    }
     
     mutating func newGame() {
         choosenOption = Int.random(in: 0..<3)
         winMode.toggle()
+    }
+    
+    mutating func reset() {
+        score = MIN_SCORE
     }
     
     func wins (_ player: Int) -> Bool {
