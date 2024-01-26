@@ -25,39 +25,47 @@ struct ContentView: View {
         VStack {
             Spacer()
             Spacer()
-            VStack { //Choosen option by game
-                Text(emojiOptions[game.choosenOption])
-                    .font(.largeTitle)
-            }
-            Spacer()
-            VStack { //Gamemode
-                Text("Choose the correct option in order to")
-                    .foregroundStyle(.secondary)
-                    .font(.subheadline.weight(.heavy))
-                Text(game.winMode ? "WIN": "LOOSE")
-                    .font(.largeTitle.weight(.semibold))
-            }
-            Spacer()
-            VStack { //Controllers
-                ForEach(0..<3) { number in
-                    Button {
-                        play(number)
-                    } label: {
-                        ButtonStyle(label: emojiOptions[number])
-                    }
-                    .padding(.horizontal)
+            VStack {
+                Spacer()
+                VStack { //Choosen option by game
+                    Text(emojiOptions[game.choosenOption])
+                        .font(.largeTitle)
                 }
+                Spacer()
+                VStack { //Gamemode
+                    Text("Choose the correct option in order to")
+                        .foregroundStyle(.secondary)
+                        .font(.subheadline.weight(.heavy))
+                    Text(game.winMode ? "WIN": "LOOSE")
+                        .font(.largeTitle.weight(.semibold))
+                }
+                Spacer()
+                VStack { //Controllers
+                    ForEach(0..<3) { number in
+                        Button {
+                            play(number)
+                        } label: {
+                            ButtonStyle(label: emojiOptions[number])
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+                .padding(10)
+                Spacer()
+                //Spacer()
+                Section {
+                    Text("Score: \(game.score)")
+                        .foregroundStyle(.primary)
+                        .font(.title3.weight(.semibold))
+                }
+                Spacer()
             }
-            .padding(10)
-            Spacer()
-            Spacer()
-            Section {
-                Text("Score: \(game.score)")
-            }
-            Spacer()
+            .background(.ultraThinMaterial)
+            .clipShape(.rect(cornerRadius: 20))
         }
         .ignoresSafeArea()
         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, maxHeight: .infinity)
+        .padding()
         .background(.cyan.gradient)
         .alert("Correct!", isPresented: $showWin) {
             Button("Continue", action: newGame)
